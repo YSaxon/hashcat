@@ -154,7 +154,7 @@ int module_hash_encode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   // digest
 
-  u32 tmp[5];
+  u32 tmp[8];
 
   tmp[0] = digest[0];
   tmp[1] = digest[1];
