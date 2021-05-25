@@ -1,6 +1,11 @@
 /**
  * Author......: See docs/credits.txt
  * License.....: MIT
+ *
+ *
+ *based on changes between https://raw.githubusercontent.com/openwall/john/9737dea214b5e52e87fd5775acadc7839d0fcdee/src/FGT_fmt_plug.c
+ *and https://fossies.org/linux/privat/john-1.9.0-jumbo-1.tar.xz/john-1.9.0-jumbo-1/src/FG2_fmt_plug.c?m=t
+ *
  */
 
 #include "common.h"
@@ -11,21 +16,21 @@
 #include "shared.h"
 
 static const u32   ATTACK_EXEC    = ATTACK_EXEC_INSIDE_KERNEL;
-static const u32   DGST_POS0      = 3;
+static const u32   DGST_POS0      = 3;//do these need to be changed?
 static const u32   DGST_POS1      = 4;
 static const u32   DGST_POS2      = 2;
 static const u32   DGST_POS3      = 1;
-static const u32   DGST_SIZE      = DGST_SIZE_4_5;
+static const u32   DGST_SIZE      = DGST_SIZE_4_8;
 static const u32   HASH_CATEGORY  = HASH_CATEGORY_OS;
-static const char *HASH_NAME      = "FortiGate (FortiOS)";
+static const char *HASH_NAME      = "FortiGate (FortiOS) updated by ysaxon";
 static const u64   KERN_TYPE      = 7000;
 static const u32   OPTI_TYPE      = OPTI_TYPE_PRECOMPUTE_INIT
                                   | OPTI_TYPE_EARLY_SKIP
                                   | OPTI_TYPE_NOT_ITERATED;
 static const u64   OPTS_TYPE      = OPTS_TYPE_PT_GENERATE_BE;
 static const u32   SALT_TYPE      = SALT_TYPE_EMBEDDED;
-static const char *ST_PASS        = "hashcat";
-static const char *ST_HASH        = "AK1FCIhM0IUIQVFJgcDFwLCMi7GppdwtRzMyDpFOFxdpH8=";
+static const char *ST_PASS        = "backup";
+static const char *ST_HASH        = "SH2MCKr6kt9rLQKbn/YTlncOnR6OtcJ1YL/h8hw2wWicjSRf3bbkSrL+q6cDpg=";
 
 u32         module_attack_exec    (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return ATTACK_EXEC;     }
 u32         module_dgst_pos0      (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return DGST_POS0;       }
@@ -42,7 +47,7 @@ u32         module_salt_type      (MAYBE_UNUSED const hashconfig_t *hashconfig, 
 const char *module_st_hash        (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return ST_HASH;         }
 const char *module_st_pass        (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return ST_PASS;         }
 
-static const char *SIGNATURE_FORTIGATE = "AK1";
+static const char *SIGNATURE_FORTIGATE = "SH2";
 
 u32 module_pw_max (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra)
 {
@@ -52,7 +57,7 @@ u32 module_pw_max (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED con
 
   if (optimized_kernel == true)
   {
-    pw_max = 19;
+    pw_max = 31;
   }
 
   return pw_max;
@@ -73,7 +78,7 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
   token.attr[0] = TOKEN_ATTR_FIXED_LENGTH
                 | TOKEN_ATTR_VERIFY_SIGNATURE;
 
-  token.len[1]  = 44;
+  token.len[1]  = 60;
   token.attr[1] = TOKEN_ATTR_FIXED_LENGTH
                 | TOKEN_ATTR_VERIFY_BASE64A;
 
@@ -89,12 +94,13 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
   const int hash_len = token.len[1];
 
   // decode salt + SHA1 hash (12 + 20 = 32)
+  //new 12+32=44
 
   u8 tmp_buf[100] = { 0 };
 
   const int decoded_len = base64_decode (base64_to_int, hash_pos, hash_len, tmp_buf);
 
-  if (decoded_len != 32) return (PARSER_HASH_LENGTH);
+  if (decoded_len != 44) return (PARSER_HASH_LENGTH);
 
   /**
    * store data
@@ -110,21 +116,27 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   // digest
 
-  memcpy (digest, tmp_buf + salt_len, 20);
+  memcpy (digest, tmp_buf + salt_len, 32);
 
   digest[0] = byte_swap_32 (digest[0]);
   digest[1] = byte_swap_32 (digest[1]);
   digest[2] = byte_swap_32 (digest[2]);
   digest[3] = byte_swap_32 (digest[3]);
   digest[4] = byte_swap_32 (digest[4]);
+  digest[5] = byte_swap_32 (digest[5]);
+  digest[6] = byte_swap_32 (digest[6]);
+  digest[7] = byte_swap_32 (digest[7]);
 
   if (hashconfig->opti_type & OPTI_TYPE_OPTIMIZED_KERNEL)
   {
-    digest[0] -= SHA1M_A;
-    digest[1] -= SHA1M_B;
-    digest[2] -= SHA1M_C;
-    digest[3] -= SHA1M_D;
-    digest[4] -= SHA1M_E;
+    digest[0] -= SHA256M_A;
+    digest[1] -= SHA256M_B;
+    digest[2] -= SHA256M_C;
+    digest[3] -= SHA256M_D;
+    digest[4] -= SHA256M_E;
+    digest[5] -= SHA256M_F;
+    digest[6] -= SHA256M_G;
+    digest[7] -= SHA256M_H;
   }
 
   return (PARSER_OK);
@@ -149,14 +161,20 @@ int module_hash_encode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
   tmp[2] = digest[2];
   tmp[3] = digest[3];
   tmp[4] = digest[4];
+  tmp[5] = digest[5];
+  tmp[6] = digest[6];
+  tmp[7] = digest[7];
 
   if (hashconfig->opti_type & OPTI_TYPE_OPTIMIZED_KERNEL)
   {
-    tmp[0] += SHA1M_A;
-    tmp[1] += SHA1M_B;
-    tmp[2] += SHA1M_C;
-    tmp[3] += SHA1M_D;
-    tmp[4] += SHA1M_E;
+    tmp[0] += SHA256M_A;
+    tmp[1] += SHA256M_B;
+    tmp[2] += SHA256M_C;
+    tmp[3] += SHA256M_D;
+    tmp[4] += SHA256M_E;
+    tmp[5] += SHA256M_F;
+    tmp[6] += SHA256M_G;
+    tmp[7] += SHA256M_H;
   }
 
   tmp[0] = byte_swap_32 (tmp[0]);
@@ -164,16 +182,20 @@ int module_hash_encode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
   tmp[2] = byte_swap_32 (tmp[2]);
   tmp[3] = byte_swap_32 (tmp[3]);
   tmp[4] = byte_swap_32 (tmp[4]);
+  tmp[5] = byte_swap_32 (tmp[5]);
+  tmp[6] = byte_swap_32 (tmp[6]);
+  tmp[7] = byte_swap_32 (tmp[7]);
 
-  memcpy (tmp_buf + 12, tmp, 20);
+  memcpy (tmp_buf + 12, tmp, 32);
 
   // base64 encode (salt + SHA1)
+  // new would be salt+sha256
 
-  char ptr_plain[48];
+  char ptr_plain[64];
 
-  base64_encode (int_to_base64, (const u8 *) tmp_buf, 12 + 20, (u8 *) ptr_plain);
+  base64_encode (int_to_base64, (const u8 *) tmp_buf, 12 + 32, (u8 *) ptr_plain);
 
-  ptr_plain[44] = 0;
+  ptr_plain[60] = 0;
 
   const int line_len = snprintf (line_buf, line_size, "%s%s", SIGNATURE_FORTIGATE, ptr_plain);
 
