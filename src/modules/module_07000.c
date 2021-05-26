@@ -2,9 +2,7 @@
  * Author......: See docs/credits.txt
  * License.....: MIT
  *
- *
- *based on changes between https://raw.githubusercontent.com/openwall/john/9737dea214b5e52e87fd5775acadc7839d0fcdee/src/FGT_fmt_plug.c
- *and https://fossies.org/linux/privat/john-1.9.0-jumbo-1.tar.xz/john-1.9.0-jumbo-1/src/FG2_fmt_plug.c?m=t
+ *based on work JohnJumbo Fortigate SH2 format by Nicolas B. <mrtchuss at gmail.com>
  *
  */
 
@@ -22,7 +20,7 @@ static const u32   DGST_POS2      = 2;
 static const u32   DGST_POS3      = 6;
 static const u32   DGST_SIZE      = DGST_SIZE_4_8;
 static const u32   HASH_CATEGORY  = HASH_CATEGORY_OS;
-static const char *HASH_NAME      = "FortiGate (FortiOS) updated by ysaxon";
+static const char *HASH_NAME      = "FortiGate (FortiOS) SHA256";
 static const u64   KERN_TYPE      = 7000;
 static const u32   OPTI_TYPE      = OPTI_TYPE_PRECOMPUTE_INIT
                                   | OPTI_TYPE_EARLY_SKIP
