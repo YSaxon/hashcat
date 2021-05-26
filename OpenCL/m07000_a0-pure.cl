@@ -13,7 +13,7 @@
 #include "inc_rp.h"
 #include "inc_rp.cl"
 #include "inc_scalar.cl"
-#include "inc_hash_sha1.cl"
+#include "inc_hash_sha256.cl"
 #endif
 
 KERNEL_FQ void m07000_mxx (KERN_ATTR_RULES ())
@@ -33,11 +33,11 @@ KERNEL_FQ void m07000_mxx (KERN_ATTR_RULES ())
 
   COPY_PW (pws[gid]);
 
-  sha1_ctx_t ctx0;
+  sha256_ctx_t ctx0;
 
-  sha1_init (&ctx0);
+  sha256_init (&ctx0);
 
-  sha1_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
+  sha256_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
 
   /**
    * loop
@@ -49,9 +49,9 @@ KERNEL_FQ void m07000_mxx (KERN_ATTR_RULES ())
 
     tmp.pw_len = apply_rules (rules_buf[il_pos].cmds, tmp.i, tmp.pw_len);
 
-    sha1_ctx_t ctx = ctx0;
+    sha256_ctx_t ctx = ctx0;
 
-    sha1_update_swap (&ctx, tmp.i, tmp.pw_len);
+    sha256_update_swap (&ctx, tmp.i, tmp.pw_len);
 
     /**
      * pepper
@@ -79,9 +79,9 @@ KERNEL_FQ void m07000_mxx (KERN_ATTR_RULES ())
     p3[2] = 0;
     p3[3] = 0;
 
-    sha1_update_64 (&ctx, p0, p1, p2, p3, 24);
+    sha256_update_64 (&ctx, p0, p1, p2, p3, 24);
 
-    sha1_final (&ctx);
+    sha256_final (&ctx);
 
     const u32 r0 = ctx.h[DGST_R0];
     const u32 r1 = ctx.h[DGST_R1];
@@ -121,11 +121,11 @@ KERNEL_FQ void m07000_sxx (KERN_ATTR_RULES ())
 
   COPY_PW (pws[gid]);
 
-  sha1_ctx_t ctx0;
+  sha256_ctx_t ctx0;
 
-  sha1_init (&ctx0);
+  sha256_init (&ctx0);
 
-  sha1_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
+  sha256_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
 
   /**
    * loop
@@ -137,9 +137,9 @@ KERNEL_FQ void m07000_sxx (KERN_ATTR_RULES ())
 
     tmp.pw_len = apply_rules (rules_buf[il_pos].cmds, tmp.i, tmp.pw_len);
 
-    sha1_ctx_t ctx = ctx0;
+    sha256_ctx_t ctx = ctx0;
 
-    sha1_update_swap (&ctx, tmp.i, tmp.pw_len);
+    sha256_update_swap (&ctx, tmp.i, tmp.pw_len);
 
     /**
      * pepper
@@ -167,9 +167,9 @@ KERNEL_FQ void m07000_sxx (KERN_ATTR_RULES ())
     p3[2] = 0;
     p3[3] = 0;
 
-    sha1_update_64 (&ctx, p0, p1, p2, p3, 24);
+    sha256_update_64 (&ctx, p0, p1, p2, p3, 24);
 
-    sha1_final (&ctx);
+    sha256_final (&ctx);
 
     const u32 r0 = ctx.h[DGST_R0];
     const u32 r1 = ctx.h[DGST_R1];
