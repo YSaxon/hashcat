@@ -11,7 +11,7 @@
 #include "inc_platform.cl"
 #include "inc_common.cl"
 #include "inc_scalar.cl"
-#include "inc_hash_sha1.cl"
+#include "inc_hash_sha256.cl"
 #endif
 
 KERNEL_FQ void m07000_mxx (KERN_ATTR_BASIC ())
@@ -29,13 +29,13 @@ KERNEL_FQ void m07000_mxx (KERN_ATTR_BASIC ())
    * base
    */
 
-  sha1_ctx_t ctx0;
+  sha256_ctx_t ctx0;
 
-  sha1_init (&ctx0);
+  sha256_init (&ctx0);
 
-  sha1_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
+  sha256_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
 
-  sha1_update_global_swap (&ctx0, pws[gid].i, pws[gid].pw_len);
+  sha256_update_global_swap (&ctx0, pws[gid].i, pws[gid].pw_len);
 
   /**
    * loop
@@ -43,9 +43,9 @@ KERNEL_FQ void m07000_mxx (KERN_ATTR_BASIC ())
 
   for (u32 il_pos = 0; il_pos < il_cnt; il_pos++)
   {
-    sha1_ctx_t ctx = ctx0;
+    sha256_ctx_t ctx = ctx0;
 
-    sha1_update_global_swap (&ctx, combs_buf[il_pos].i, combs_buf[il_pos].pw_len);
+    sha256_update_global_swap (&ctx, combs_buf[il_pos].i, combs_buf[il_pos].pw_len);
 
     /**
      * pepper
@@ -73,9 +73,9 @@ KERNEL_FQ void m07000_mxx (KERN_ATTR_BASIC ())
     p3[2] = 0;
     p3[3] = 0;
 
-    sha1_update_64 (&ctx, p0, p1, p2, p3, 24);
+    sha256_update_64 (&ctx, p0, p1, p2, p3, 24);
 
-    sha1_final (&ctx);
+    sha256_final (&ctx);
 
     const u32 r0 = ctx.h[DGST_R0];
     const u32 r1 = ctx.h[DGST_R1];
@@ -113,13 +113,13 @@ KERNEL_FQ void m07000_sxx (KERN_ATTR_BASIC ())
    * base
    */
 
-  sha1_ctx_t ctx0;
+  sha256_ctx_t ctx0;
 
-  sha1_init (&ctx0);
+  sha256_init (&ctx0);
 
-  sha1_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
+  sha256_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
 
-  sha1_update_global_swap (&ctx0, pws[gid].i, pws[gid].pw_len);
+  sha256_update_global_swap (&ctx0, pws[gid].i, pws[gid].pw_len);
 
   /**
    * loop
@@ -127,9 +127,9 @@ KERNEL_FQ void m07000_sxx (KERN_ATTR_BASIC ())
 
   for (u32 il_pos = 0; il_pos < il_cnt; il_pos++)
   {
-    sha1_ctx_t ctx = ctx0;
+    sha256_ctx_t ctx = ctx0;
 
-    sha1_update_global_swap (&ctx, combs_buf[il_pos].i, combs_buf[il_pos].pw_len);
+    sha256_update_global_swap (&ctx, combs_buf[il_pos].i, combs_buf[il_pos].pw_len);
 
     /**
      * pepper
@@ -157,9 +157,9 @@ KERNEL_FQ void m07000_sxx (KERN_ATTR_BASIC ())
     p3[2] = 0;
     p3[3] = 0;
 
-    sha1_update_64 (&ctx, p0, p1, p2, p3, 24);
+    sha256_update_64 (&ctx, p0, p1, p2, p3, 24);
 
-    sha1_final (&ctx);
+    sha256_final (&ctx);
 
     const u32 r0 = ctx.h[DGST_R0];
     const u32 r1 = ctx.h[DGST_R1];

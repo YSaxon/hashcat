@@ -11,7 +11,7 @@
 #include "inc_platform.cl"
 #include "inc_common.cl"
 #include "inc_simd.cl"
-#include "inc_hash_sha1.cl"
+#include "inc_hash_sha256.cl"
 #endif
 
 KERNEL_FQ void m07000_mxx (KERN_ATTR_VECTOR ())
@@ -38,11 +38,11 @@ KERNEL_FQ void m07000_mxx (KERN_ATTR_VECTOR ())
     w[idx] = pws[gid].i[idx];
   }
 
-  sha1_ctx_t ctx0;
+  sha256_ctx_t ctx0;
 
-  sha1_init (&ctx0);
+  sha256_init (&ctx0);
 
-  sha1_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
+  sha256_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
 
   /**
    * loop
@@ -58,11 +58,11 @@ KERNEL_FQ void m07000_mxx (KERN_ATTR_VECTOR ())
 
     w[0] = w0;
 
-    sha1_ctx_vector_t ctx;
+    sha256_ctx_vector_t ctx;
 
-    sha1_init_vector_from_scalar (&ctx, &ctx0);
+    sha256_init_vector_from_scalar (&ctx, &ctx0);
 
-    sha1_update_vector (&ctx, w, pw_len);
+    sha256_update_vector (&ctx, w, pw_len);
 
     /**
      * pepper
@@ -90,9 +90,9 @@ KERNEL_FQ void m07000_mxx (KERN_ATTR_VECTOR ())
     p3[2] = 0;
     p3[3] = 0;
 
-    sha1_update_vector_64 (&ctx, p0, p1, p2, p3, 24);
+    sha256_update_vector_64 (&ctx, p0, p1, p2, p3, 24);
 
-    sha1_final_vector (&ctx);
+    sha256_final_vector (&ctx);
 
     const u32x r0 = ctx.h[DGST_R0];
     const u32x r1 = ctx.h[DGST_R1];
@@ -139,11 +139,11 @@ KERNEL_FQ void m07000_sxx (KERN_ATTR_VECTOR ())
     w[idx] = pws[gid].i[idx];
   }
 
-  sha1_ctx_t ctx0;
+  sha256_ctx_t ctx0;
 
-  sha1_init (&ctx0);
+  sha256_init (&ctx0);
 
-  sha1_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
+  sha256_update_global_swap (&ctx0, salt_bufs[SALT_POS].salt_buf, salt_bufs[SALT_POS].salt_len);
 
   /**
    * loop
@@ -159,11 +159,11 @@ KERNEL_FQ void m07000_sxx (KERN_ATTR_VECTOR ())
 
     w[0] = w0;
 
-    sha1_ctx_vector_t ctx;
+    sha256_ctx_vector_t ctx;
 
-    sha1_init_vector_from_scalar (&ctx, &ctx0);
+    sha256_init_vector_from_scalar (&ctx, &ctx0);
 
-    sha1_update_vector (&ctx, w, pw_len);
+    sha256_update_vector (&ctx, w, pw_len);
 
     /**
      * pepper
@@ -191,9 +191,9 @@ KERNEL_FQ void m07000_sxx (KERN_ATTR_VECTOR ())
     p3[2] = 0;
     p3[3] = 0;
 
-    sha1_update_vector_64 (&ctx, p0, p1, p2, p3, 24);
+    sha256_update_vector_64 (&ctx, p0, p1, p2, p3, 24);
 
-    sha1_final_vector (&ctx);
+    sha256_final_vector (&ctx);
 
     const u32x r0 = ctx.h[DGST_R0];
     const u32x r1 = ctx.h[DGST_R1];
