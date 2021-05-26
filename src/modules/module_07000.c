@@ -16,10 +16,10 @@
 #include "shared.h"
 
 static const u32   ATTACK_EXEC    = ATTACK_EXEC_INSIDE_KERNEL;
-static const u32   DGST_POS0      = 6;//do these need to be changed?
-static const u32   DGST_POS1      = 7;
-static const u32   DGST_POS2      = 4;
-static const u32   DGST_POS3      = 5;
+static const u32   DGST_POS0      = 3;//do these need to be changed?
+static const u32   DGST_POS1      = 4;
+static const u32   DGST_POS2      = 2;
+static const u32   DGST_POS3      = 1;
 static const u32   DGST_SIZE      = DGST_SIZE_4_8;
 static const u32   HASH_CATEGORY  = HASH_CATEGORY_OS;
 static const char *HASH_NAME      = "FortiGate (FortiOS) updated by ysaxon";
