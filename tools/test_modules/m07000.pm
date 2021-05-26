@@ -8,22 +8,22 @@
 use strict;
 use warnings;
 
-use Digest::SHA  qw (sha1);
+use Digest::SHA  qw (sha256);
 use MIME::Base64 qw (encode_base64 decode_base64);
 
-sub module_constraints { [[0, 256], [24, 24], [0, 19], [24, 24], [-1, -1]] }
+sub module_constraints { [[0, 256], [24, 24], [-1, -1], [-1, -1], [-1, -1]] }
 
 sub module_generate_hash
 {
   my $word = shift;
   my $salt = shift;
 
-  my $FORTIGATE_SIGNATURE = "AK1";
+  my $FORTIGATE_SIGNATURE = "SH2";
   my $FORTIGATE_MAGIC     = pack ("H*", "a388ba2e424cb04a537930c13107cc3fa1329029a9815b70");
 
   my $salt_bin = pack ("H*", $salt);
 
-  my $hash_buf = sha1 ($salt_bin . $word . $FORTIGATE_MAGIC);
+  my $hash_buf = sha256 ($salt_bin . $word . $FORTIGATE_MAGIC);
 
   $hash_buf = encode_base64 ($salt_bin . $hash_buf, "");
 
@@ -38,7 +38,7 @@ sub module_verify_hash
 
   my $index1 = index ($line, ":");
 
-  return if $index1 != 47;
+  return if $index1 != 63;
 
   my $hash_in = substr ($line, 0, $index1);
 
