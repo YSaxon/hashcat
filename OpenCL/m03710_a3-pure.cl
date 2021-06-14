@@ -12,6 +12,7 @@
 #include "inc_common.cl"
 #include "inc_simd.cl"
 #include "inc_hash_md5.cl"
+#include "inc_hash_md4.cl"
 #endif
 
 #if   VECT_SIZE == 1
@@ -91,13 +92,13 @@ KERNEL_FQ void m03710_mxx (KERN_ATTR_VECTOR ())
 
     w[0] = w0lr;
 
-    md5_ctx_vector_t ctx0;
+    md4_ctx_vector_t ctx0;
 
-    md5_init_vector (&ctx0);
+    md4_init_vector (&ctx0);
 
-    md5_update_vector (&ctx0, w, pw_len);
+    md4_update_vector (&ctx0, w, pw_len);
 
-    md5_final_vector (&ctx0);
+    md4_final_vector (&ctx0);
 
     const u32x a = ctx0.h[0];
     const u32x b = ctx0.h[1];
@@ -230,13 +231,13 @@ KERNEL_FQ void m03710_sxx (KERN_ATTR_VECTOR ())
 
     w[0] = w0lr;
 
-    md5_ctx_vector_t ctx0;
+    md4_ctx_vector_t ctx0;
 
-    md5_init_vector (&ctx0);
+    md4_init_vector (&ctx0);
 
-    md5_update_vector (&ctx0, w, pw_len);
+    md4_update_vector (&ctx0, w, pw_len);
 
-    md5_final_vector (&ctx0);
+    md4_final_vector (&ctx0);
 
     const u32x a = ctx0.h[0];
     const u32x b = ctx0.h[1];
