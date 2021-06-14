@@ -10,6 +10,8 @@ use warnings;
 
 use Digest::MD4 qw (md4_hex);
 use Digest::MD5 qw (md5_hex);
+use Text::Iconv;
+
 
 sub module_constraints { [[0, 256], [32, 32], [-1, -1], [-1, -1], [-1, -1]] }
 
@@ -17,8 +19,9 @@ sub module_generate_hash
 {
   my $word = shift;
   my $salt = shift;
+  my $converter = Text::Iconv->new('utf8', 'UTF-16LE');
 
-  my $digest = md5_hex ($salt . md4_hex ($word));
+  my $digest = md5_hex ($salt . md4_hex ($converter->convert ($word)));
 
   my $hash = sprintf ("%s:%s", $digest, $salt);
 

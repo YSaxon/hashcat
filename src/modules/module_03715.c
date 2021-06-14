@@ -26,7 +26,8 @@ static const u32   OPTI_TYPE      = OPTI_TYPE_ZERO_BYTE
                                   | OPTI_TYPE_RAW_HASH;
 static const u64   OPTS_TYPE      = OPTS_TYPE_PT_GENERATE_LE
                                   | OPTS_TYPE_PT_ADD80
-                                  | OPTS_TYPE_PT_ADDBITS14;
+                                  | OPTS_TYPE_PT_ADDBITS14
+                                  | OPTS_TYPE_PT_UTF16LE;
 static const u32   SALT_TYPE      = SALT_TYPE_GENERIC;
 static const char *ST_PASS        = "password";
 static const char *ST_HASH        = "8E36265C3B44B640CCB365040DE68E5A4BF09D61C23AB4A0CC9D1866E1C69191";

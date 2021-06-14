@@ -29,7 +29,7 @@
 #define uint_to_hex_lower8(i) make_u32x (l_bin2asc[(i).s0], l_bin2asc[(i).s1], l_bin2asc[(i).s2], l_bin2asc[(i).s3], l_bin2asc[(i).s4], l_bin2asc[(i).s5], l_bin2asc[(i).s6], l_bin2asc[(i).s7], l_bin2asc[(i).s8], l_bin2asc[(i).s9], l_bin2asc[(i).sa], l_bin2asc[(i).sb], l_bin2asc[(i).sc], l_bin2asc[(i).sd], l_bin2asc[(i).se], l_bin2asc[(i).sf])
 #endif
 
-KERNEL_FQ void m03710_mxx (KERN_ATTR_RULES ())
+KERNEL_FQ void m03715_mxx (KERN_ATTR_RULES ())
 {
   /**
    * modifier
@@ -87,7 +87,7 @@ KERNEL_FQ void m03710_mxx (KERN_ATTR_RULES ())
 
     md4_init (&ctx0);
 
-    md4_update (&ctx0, tmp.i, tmp.pw_len);
+    md4_update_utf16le (&ctx0, tmp.i, tmp.pw_len);
 
     md4_final (&ctx0);
 
@@ -145,7 +145,7 @@ KERNEL_FQ void m03710_mxx (KERN_ATTR_RULES ())
   }
 }
 
-KERNEL_FQ void m03710_sxx (KERN_ATTR_RULES ())
+KERNEL_FQ void m03715_sxx (KERN_ATTR_RULES ())
 {
   /**
    * modifier
@@ -215,7 +215,7 @@ KERNEL_FQ void m03710_sxx (KERN_ATTR_RULES ())
 
     md4_init (&ctx0);
 
-    md4_update (&ctx0, tmp.i, tmp.pw_len);
+    md4_update_utf16le (&ctx0, tmp.i, tmp.pw_len);
 
     md4_final (&ctx0);
 

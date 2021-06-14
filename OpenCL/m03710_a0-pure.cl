@@ -87,7 +87,7 @@ KERNEL_FQ void m03710_mxx (KERN_ATTR_RULES ())
 
     md4_init (&ctx0);
 
-    md4_update (&ctx0, tmp.i, tmp.pw_len);
+    md4_update_utf16le (&ctx0, tmp.i, tmp.pw_len);
 
     md4_final (&ctx0);
 
@@ -215,7 +215,7 @@ KERNEL_FQ void m03710_sxx (KERN_ATTR_RULES ())
 
     md4_init (&ctx0);
 
-    md4_update (&ctx0, tmp.i, tmp.pw_len);
+    md4_update_utf16le (&ctx0, tmp.i, tmp.pw_len);
 
     md4_final (&ctx0);
 
