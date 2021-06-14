@@ -17,7 +17,7 @@ static const u32   DGST_POS2      = 2;
 static const u32   DGST_POS3      = 1;
 static const u32   DGST_SIZE      = DGST_SIZE_4_4;
 static const u32   HASH_CATEGORY  = HASH_CATEGORY_RAW_HASH_SALTED;
-static const char *HASH_NAME      = "md5($salt.md4($pass)) hash at end of colon";
+static const char *HASH_NAME      = "md5($salt.md4($pass)) hash prepended";
 static const u64   KERN_TYPE      = 3710;
 static const u32   OPTI_TYPE      = OPTI_TYPE_ZERO_BYTE
                                   | OPTI_TYPE_PRECOMPUTE_INIT
@@ -27,7 +27,7 @@ static const u64   OPTS_TYPE      = OPTS_TYPE_PT_GENERATE_LE
                                   | OPTS_TYPE_PT_ADDBITS14;
 static const u32   SALT_TYPE      = SALT_TYPE_GENERIC;
 static const char *ST_PASS        = "password";
-static const char *ST_HASH        = "4bf09d61c23ab4a0cc9d1866e1c69191:8e36265c3b44b640ccb365040de68e5a";
+static const char *ST_HASH        = "8E36265C3B44B640CCB365040DE68E5A4BF09D61C23AB4A0CC9D1866E1C69191";
 
 u32         module_attack_exec    (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return ATTACK_EXEC;     }
 u32         module_dgst_pos0      (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return DGST_POS0;       }
@@ -64,15 +64,24 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   token.token_cnt  = 2;
 
-  token.sep[0]     = hashconfig->separator;
-  token.len_min[0] = 32;
-  token.len_max[0] = 32;
-  token.attr[0]    = TOKEN_ATTR_VERIFY_LENGTH
+  // token.sep[0]     = hashconfig->separator;
+  // token.len_min[0] = 32;
+  // token.len_max[0] = 32;
+  // token.attr[0]    = TOKEN_ATTR_VERIFY_LENGTH
+  //                  | TOKEN_ATTR_VERIFY_HEX;
+
+  // token.len_min[1] = SALT_MIN;
+  // token.len_max[1] = SALT_MAX;
+  // token.attr[1]    = TOKEN_ATTR_VERIFY_LENGTH;
+
+  token.len[0]     = 16;
+  token.attr[0]    = TOKEN_ATTR_FIXED_LENGTH;
+
+  token.len_min[1] = 16;
+  token.len_max[1] = 16;
+  token.attr[1]    = TOKEN_ATTR_VERIFY_LENGTH
                    | TOKEN_ATTR_VERIFY_HEX;
 
-  token.len_min[1] = SALT_MIN;
-  token.len_max[1] = SALT_MAX;
-  token.attr[1]    = TOKEN_ATTR_VERIFY_LENGTH;
 
   if (hashconfig->opts_type & OPTS_TYPE_ST_HEX)
   {
@@ -86,7 +95,7 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   if (rc_tokenizer != PARSER_OK) return (rc_tokenizer);
 
-  const u8 *hash_pos = token.buf[0];
+  const u8 *hash_pos = token.buf[1];
 
   digest[0] = hex_to_u32 (hash_pos +  0);
   digest[1] = hex_to_u32 (hash_pos +  8);
@@ -101,8 +110,8 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
     digest[3] -= MD5M_D;
   }
 
-  const u8 *salt_pos = token.buf[1];
-  const int salt_len = token.len[1];
+  const u8 *salt_pos = token.buf[0];
+  const int salt_len = token.len[0];
 
   const bool parse_rc = generic_salt_decode (hashconfig, salt_pos, salt_len, (u8 *) salt->salt_buf, (int *) &salt->salt_len);
 
@@ -137,16 +146,13 @@ int module_hash_encode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   int out_len = 0;
 
+  out_len += generic_salt_encode (hashconfig, (const u8 *) salt->salt_buf, (const int) salt->salt_len, out_buf + out_len);
+
+
   u32_to_hex (tmp[0], out_buf + out_len); out_len += 8;
   u32_to_hex (tmp[1], out_buf + out_len); out_len += 8;
   u32_to_hex (tmp[2], out_buf + out_len); out_len += 8;
   u32_to_hex (tmp[3], out_buf + out_len); out_len += 8;
-
-  out_buf[out_len] = hashconfig->separator;
-
-  out_len += 1;
-
-  out_len += generic_salt_encode (hashconfig, (const u8 *) salt->salt_buf, (const int) salt->salt_len, out_buf + out_len);
 
   return out_len;
 }
