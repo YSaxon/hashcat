@@ -18,10 +18,9 @@ sub module_generate_hash
   my $word = shift;
   my $salt = shift;
 
-  
   my $digest = md5_hex ($salt . md4_hex ($word));
 
-  my $hash = sprintf ("%s%s", $salt, $digest);
+  my $hash = sprintf ("%s:%s", $digest, $salt);
 
   return $hash;
 }
@@ -30,15 +29,9 @@ sub module_verify_hash
 {
   my $line = shift;
 
-  my ($hash, $word) = split (':', $line);
+  my ($hash, $salt, $word) = split (':', $line);
 
-  return unless length ($hash) == 32;
-
-  my $index1 = 16;
-  my $salt = substr ($hash, 0, $index1);
-  # my $digest = substr ($hash, $index1 + 1);
-
-  # return unless defined $digest;
+  return unless defined $hash;
   return unless defined $salt;
   return unless defined $word;
 
