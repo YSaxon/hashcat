@@ -20,7 +20,8 @@ sub module_generate_hash
   my $word = shift;
   my $salt = shift;
 
-  
+  my $converter = Text::Iconv->new('utf8', 'UTF-16LE');
+
   my $digest = md5_hex ($salt . md4_hex ($converter->convert ($word)));
 
   my $hash = sprintf ("%s%s", $salt, $digest);
