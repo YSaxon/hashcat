@@ -22,14 +22,13 @@ static const u64   KERN_TYPE      = 3710;
 static const u32   OPTI_TYPE      = OPTI_TYPE_ZERO_BYTE
                                   | OPTI_TYPE_PRECOMPUTE_INIT
                                   | OPTI_TYPE_EARLY_SKIP
-                                  | OPTI_TYPE_NOT_ITERATED
-                                  | OPTI_TYPE_RAW_HASH;
+                                  | OPTI_TYPE_NOT_ITERATED;
 static const u64   OPTS_TYPE      = OPTS_TYPE_PT_GENERATE_LE
                                    | OPTS_TYPE_PT_ADD80
                                    | OPTS_TYPE_PT_ADDBITS14
                                    | OPTS_TYPE_PT_UTF16LE
                                    | OPTS_TYPE_ST_HEX;
-static const u32   SALT_TYPE      = SALT_TYPE_EMBEDDED;
+static const u32   SALT_TYPE      = SALT_TYPE_GENERIC;
 static const char *ST_PASS        = "password";
 static const char *ST_HASH        = "4bf09d61c23ab4a0cc9d1866e1c69191:8e36265c3b44b640ccb365040de68e5a";
 
@@ -74,8 +73,9 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
   token.attr[0]    = TOKEN_ATTR_VERIFY_LENGTH
                    | TOKEN_ATTR_VERIFY_HEX;
 
-  token.len[1] = 32;
-  token.attr[1] = TOKEN_ATTR_FIXED_LENGTH;;
+  token.len_min[1] = 0;
+  token.len_max[1] = 32;
+  token.attr[1]    = TOKEN_ATTR_VERIFY_LENGTH;
 
   // if (hashconfig->opts_type & OPTS_TYPE_ST_HEX)
   // {
