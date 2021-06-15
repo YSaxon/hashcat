@@ -151,7 +151,7 @@ printf("%x\n",w)
     md5_update_64 (&ctx, w0, w1, w2, w3, 32);
     */
 
-printf("%x\n",&ctx)
+//printf("%x\n",&ctx)
 
     md5_final (&ctx);
 
@@ -252,6 +252,7 @@ KERNEL_FQ void m03710_sxx (KERN_ATTR_RULES ())
     w[2] = ctx0.h[2];
     w[3] = ctx0.h[3];
 
+      printf("%x\n",w)
 
 
     md5_ctx_t ctx;
