@@ -9,6 +9,8 @@ use strict;
 use warnings;
 
 use Digest::MD4 qw (md4_hex);
+use Digest::MD4 qw (md4);
+
 use Digest::MD5 qw (md5_hex);
 use Text::Iconv;
 
@@ -21,7 +23,15 @@ sub module_generate_hash
   my $salt = shift;
   my $converter = Text::Iconv->new('utf8', 'UTF-16LE');
 
-  my $digest = md5_hex ($salt . md4_hex ($converter->convert ($word)));
+  # $ntpass= pack_if_HEX_notation(md4_hex ($converter->convert ($word)))
+  # print "ntpass $ntpass\n"
+
+  my $salt_bin = pack ("H*", $salt);
+   
+# md5_hex (uc ($salt ).
+  my $hash_buf =  md4($converter->convert ($word));
+
+  my $digest= md5_hex($salt_bin . $hash_buf);
 
   my $hash = sprintf ("%s:%s", $digest, $salt);
 

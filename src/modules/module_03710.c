@@ -27,8 +27,9 @@ static const u32   OPTI_TYPE      = OPTI_TYPE_ZERO_BYTE
 static const u64   OPTS_TYPE      = OPTS_TYPE_PT_GENERATE_LE
                                    | OPTS_TYPE_PT_ADD80
                                    | OPTS_TYPE_PT_ADDBITS14
-                                   | OPTS_TYPE_PT_UTF16LE;
-static const u32   SALT_TYPE      = SALT_TYPE_GENERIC;
+                                   | OPTS_TYPE_PT_UTF16LE
+                                   | OPTS_TYPE_ST_HEX;
+static const u32   SALT_TYPE      = SALT_TYPE_EMBEDDED;
 static const u32   PWDUMP_COLUMN  = PWDUMP_COLUMN_NTLM_HASH;
 static const char *ST_PASS        = "password";
 static const char *ST_HASH        = "4bf09d61c23ab4a0cc9d1866e1c69191:8e36265c3b44b640ccb365040de68e5a";
@@ -129,13 +130,13 @@ int module_hash_encode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
   tmp[2] = digest[2];
   tmp[3] = digest[3];
 
-  if (hashconfig->opti_type & OPTI_TYPE_OPTIMIZED_KERNEL)
-  {
-    tmp[0] += MD5M_A;
-    tmp[1] += MD5M_B;
-    tmp[2] += MD5M_C;
-    tmp[3] += MD5M_D;
-  }
+  // if (hashconfig->opti_type & OPTI_TYPE_OPTIMIZED_KERNEL)
+  // {
+  //   tmp[0] += MD5M_A;
+  //   tmp[1] += MD5M_B;
+  //   tmp[2] += MD5M_C;
+  //   tmp[3] += MD5M_D;
+  // }
 
   u8 *out_buf = (u8 *) line_buf;
 

@@ -91,21 +91,33 @@ KERNEL_FQ void m03710_mxx (KERN_ATTR_RULES ())
 
     md4_final (&ctx0);
 
+/*
     const u32 a = ctx0.h[0];
     const u32 b = ctx0.h[1];
     const u32 c = ctx0.h[2];
     const u32 d = ctx0.h[3];
+    */
+
+
+    u32 w[16] = { 0 }; // we need 64-bit alignment for md5_update ()
+    w[0] = ctx0.h[0];
+    w[1] = ctx0.h[1];
+    w[2] = ctx0.h[2];
+    w[3] = ctx0.h[3];
 
     md5_ctx_t ctx;
 
     md5_init (&ctx);
 
     md5_update (&ctx, s, salt_len);
+    md5_update (&ctx, w, 16);
 
+/*
     u32 w0[4];
     u32 w1[4];
     u32 w2[4];
     u32 w3[4];
+
 
     w0[0] = uint_to_hex_lower8 ((a >>  0) & 255) <<  0
           | uint_to_hex_lower8 ((a >>  8) & 255) << 16;
@@ -132,7 +144,10 @@ KERNEL_FQ void m03710_mxx (KERN_ATTR_RULES ())
     w3[2] = 0;
     w3[3] = 0;
 
+    
+
     md5_update_64 (&ctx, w0, w1, w2, w3, 32);
+    */
 
     md5_final (&ctx);
 
@@ -219,17 +234,30 @@ KERNEL_FQ void m03710_sxx (KERN_ATTR_RULES ())
 
     md4_final (&ctx0);
 
+/*
     const u32 a = ctx0.h[0];
     const u32 b = ctx0.h[1];
     const u32 c = ctx0.h[2];
     const u32 d = ctx0.h[3];
+*/
+
+
+    u32 w[16] = { 0 }; // we need 64-bit alignment for md5_update ()
+    w[0] = ctx0.h[0];
+    w[1] = ctx0.h[1];
+    w[2] = ctx0.h[2];
+    w[3] = ctx0.h[3];
+
+
 
     md5_ctx_t ctx;
 
     md5_init (&ctx);
 
     md5_update (&ctx, s, salt_len);
+    md5_update (&ctx, w, 16);
 
+/*
     u32 w0[4];
     u32 w1[4];
     u32 w2[4];
@@ -261,6 +289,8 @@ KERNEL_FQ void m03710_sxx (KERN_ATTR_RULES ())
     w3[3] = 0;
 
     md5_update_64 (&ctx, w0, w1, w2, w3, 32);
+
+*/
 
     md5_final (&ctx);
 
